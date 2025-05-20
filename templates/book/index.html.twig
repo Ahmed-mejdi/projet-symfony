@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book Catalog{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Book Catalog</h1>
+            <a href="{{ path('app_book_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Add New Book
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Cover</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for book in books %}
+                            <tr>
+                                <td>{{ book.id }}</td>
+                                <td>
+                                    {% if book.coverImage %}
+                                        <img src="{{ book.coverImage }}" alt="{{ book.title }}" class="img-thumbnail" style="height: 50px;">
+                                    {% else %}
+                                        <div class="bg-light text-center" style="width: 35px; height: 50px;">
+                                            <i class="bi bi-book text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_book_show', {'id': book.id}) }}" class="text-decoration-none">
+                                        {{ book.title }}
+                                    </a>
+                                </td>
+                                <td>{{ book.author }}</td>
+                                <td>
+                                    {% if book.category %}
+                                        <span class="badge bg-secondary">{{ book.category.name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>${{ book.price|number_format(2) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ book.stock > 0 ? 'success' : 'danger' }}">
+                                        {{ book.stock > 0 ? book.stock : 'Out of stock' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-sm btn-outline-primary" title="View details">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                        <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-sm btn-outline-secondary" title="Edit book">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-journal-x fs-2"></i>
+                                        <p class="mt-2">No books found in the catalog</p>
+                                        <a href="{{ path('app_book_new') }}" class="btn btn-sm btn-primary mt-2">Add your first book</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

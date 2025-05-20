@@ -1,0 +1,147 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.title, {'attr': {
+                            'class': 'form-control' ~ (form.title.vars.valid ? '' : ' is-invalid'),
+                            'placeholder': 'Enter book title'
+                        }}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.title) }}
+                        </div>
+                        <div class="form-text">The main title of the book</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.author, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.author, {'attr': {
+                            'class': 'form-control' ~ (form.author.vars.valid ? '' : ' is-invalid'),
+                            'placeholder': 'Enter author name'
+                        }}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.author) }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form_widget(form.price, {'attr': {
+                                        'class': 'form-control' ~ (form.price.vars.valid ? '' : ' is-invalid'),
+                                        'placeholder': '0.00',
+                                        'min': '0',
+                                        'step': '0.01'
+                                    }}) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.price) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.stock, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.stock, {'attr': {
+                                    'class': 'form-control' ~ (form.stock.vars.valid ? '' : ' is-invalid'),
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.stock) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.isbn, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.isbn, {'attr': {
+                            'class': 'form-control' ~ (form.isbn.vars.valid ? '' : ' is-invalid'),
+                            'placeholder': 'Enter ISBN'
+                        }}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.isbn) }}
+                        </div>
+                        <div class="form-text">International Standard Book Number (e.g., 978-3-16-148410-0)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.category, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.category, {'attr': {
+                            'class': 'form-select' ~ (form.category.vars.valid ? '' : ' is-invalid')
+                        }}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.category) }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.coverImage, null, {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-image"></i></span>
+                            {{ form_widget(form.coverImage, {'attr': {
+                                'class': 'form-control' ~ (form.coverImage.vars.valid ? '' : ' is-invalid'),
+                                'placeholder': 'https://example.com/cover.jpg'
+                            }}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.coverImage) }}
+                            </div>
+                        </div>
+                        <div class="form-text">Enter a URL for the book cover image</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description, {'attr': {
+                    'class': 'form-control' ~ (form.description.vars.valid ? '' : ' is-invalid'),
+                    'rows': 5,
+                    'placeholder': 'Enter book description'
+                }}) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.description) }}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    {{ button_label|default('Save') }}
+                    <i class="bi bi-check-lg ms-1"></i>
+                </button>
+                <a href="{{ path('app_book_index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation');
+  
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
+</script>

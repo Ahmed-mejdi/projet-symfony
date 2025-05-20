@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block body %}
+    <h1>Orders</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.orderDate ? order.orderDate|date('Y-m-d H:i') : '' }}</td>
+                <td>{{ order.user.email }}</td>
+                <td>
+                    <span class="badge bg-{{ order.status == 'completed' ? 'success' : (order.status == 'pending' ? 'warning' : 'info') }}">
+                        {{ order.status|capitalize }}
+                    </span>
+                </td>
+                <td>${{ order.totalAmount|number_format(2) }}</td>
+                <td>
+                    <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-sm btn-primary">Show</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_order_edit', {'id': order.id}) }}" class="btn btn-sm btn-secondary">Edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">No orders found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

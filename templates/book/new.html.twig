@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Book{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_book_index') }}">Books</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add New Book</li>
+            </ol>
+        </nav>
+
+        <div class="mb-4">
+            <h1>Add New Book</h1>
+            <p class="text-muted">Fill in the details to add a new book to the catalog</p>
+        </div>
+        
+        {{ include('book/_form.html.twig', {'button_label': 'Create'}) }}
+    </div>
+{% endblock %}

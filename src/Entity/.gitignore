@@ -1,0 +1,5 @@
+# Fichiers d'environnement
+.env.local
+.env.*.local
+
+# Gardez .env comme modèle mais assurez-vous qu'il ne contient pas de vraies clés

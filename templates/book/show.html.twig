@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_book_index') }}">Books</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+            </ol>
+        </nav>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="position-relative">
+                            {% if book.coverImage %}
+                                <img src="{{ book.coverImage }}" class="img-fluid rounded shadow-sm" alt="{{ book.title }}" loading="lazy">
+                            {% else %}
+                                <div class="ratio ratio-2x3 bg-light rounded d-flex align-items-center justify-content-center">
+                                    <div class="text-center text-secondary p-4">
+                                        <i class="bi bi-book fs-1"></i>
+                                        <p class="mt-2">No cover available</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            {% if book.stock <= 0 %}
+                                <div class="position-absolute top-0 end-0 p-2">
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if book.stock > 0 %}
+                            <div class="mt-3">
+                                <form action="{{ path('app_cart_add', {'id': book.id}) }}" method="post">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Qty</span>
+                                        <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}" class="form-control" aria-label="Quantity">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                                        </button>
+                                    </div>
+                                    <div class="form-text">{{ book.stock }} copies available</div>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <h1 class="mb-1">{{ book.title }}</h1>
+                        <h4 class="text-muted mb-3">by {{ book.author }}</h4>
+                        
+                        <div class="d-flex gap-2 mb-4 flex-wrap">
+                            {% if book.category %}
+                                <span class="badge bg-secondary">{{ book.category.name }}</span>
+                            {% endif %}
+                            <span class="badge bg-primary">${{ book.price|number_format(2) }}</span>
+                            <span class="badge bg-info text-dark">ISBN: {{ book.isbn }}</span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4>Description</h4>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    {{ book.description|nl2br }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4>
+                                AI Summary
+                                {% if not book.aiSummary %}
+                                    <span class="badge bg-secondary ms-2">Not Available</span>
+                                {% endif %}
+                            </h4>
+                            
+                            {% if book.aiSummary %}
+                                <div class="card bg-light border-primary border-start border-5">
+                                    <div class="card-body">
+                                        {{ book.aiSummary|nl2br }}
+                                    </div>
+                                </div>
+                                
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <div class="mt-2">
+                                        <a href="{{ path('app_book_generate_summary', {'id': book.id}) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerate Summary
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% elseif is_granted('ROLE_ADMIN') %}
+                                <div class="card bg-light border-dashed">
+                                    <div class="card-body text-center py-4">
+                                        <p class="text-muted mb-3">No AI summary available for this book</p>
+                                        <a href="{{ path('app_book_generate_summary', {'id': book.id}) }}" class="btn btn-primary">
+                                            <i class="bi bi-magic me-1"></i> Generate AI Summary
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="card bg-light">
+                                    <div class="card-body text-center py-4">
+                                        <p class="text-muted">No AI summary available for this book</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-2 mt-4">
+                            <a href="{{ path('app_book_index') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Back to list
+                            </a>
+                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-primary">
+                                    <i class="bi bi-pencil me-1"></i> Edit
+                                </a>
+                                
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if is_granted('ROLE_ADMIN') %}
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete "{{ book.title }}"? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" action="{{ path('app_book_delete', {'id': book.id}) }}" style="display: inline-block;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ book.id) }}">
+                        <button class="btn btn-danger">Delete Permanently</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

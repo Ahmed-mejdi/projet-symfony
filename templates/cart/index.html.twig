@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block body %}
+    <h1>Shopping Cart</h1>
+
+    {% if items|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.book.coverImage %}
+                                        <img src="{{ item.book.coverImage }}" alt="{{ item.book.title }}" class="img-thumbnail me-2" style="width: 50px;">
+                                    {% endif %}
+                                    <div>
+                                        <a href="{{ path('app_book_show', {'id': item.book.id}) }}">{{ item.book.title }}</a>
+                                        <div class="text-muted small">{{ item.book.author }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${{ item.book.price|number_format(2) }}</td>
+                            <td>
+                                <form action="{{ path('app_cart_update', {'id': item.book.id}) }}" method="post" class="d-flex align-items-center">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.book.stock }}" class="form-control form-control-sm" style="width: 70px;">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Update</button>
+                                </form>
+                            </td>
+                            <td>${{ item.subtotal|number_format(2) }}</td>
+                            <td>
+                                <a href="{{ path('app_cart_remove', {'id': item.book.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this item?')">Remove</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td colspan="2" class="fw-bold">${{ total|number_format(2) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <div>
+                <a href="{{ path('app_book_index') }}" class="btn btn-secondary">Continue Shopping</a>
+                <a href="{{ path('app_cart_clear') }}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to clear your cart?')">Clear Cart</a>
+            </div>
+            <div>
+                {% if app.user %}
+                    <a href="{{ path('app_cart_checkout') }}" class="btn btn-success">Checkout</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">Login to Checkout</a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Your cart is empty. <a href="{{ path('app_book_index') }}">Browse books</a> to add items to your cart.
+        </div>
+    {% endif %}
+{% endblock %}

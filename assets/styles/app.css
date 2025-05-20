@@ -1,0 +1,6 @@
+body {
+    background-color: skyblue;
+}
+.border-dashed {
+    border: 2px dashed #dee2e6 !important;
+}
